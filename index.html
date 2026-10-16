@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyZone</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Welcome / Auth Screen -->
+    <div id="welcome-screen">
+        <div class="auth-box">
+            <h1 class="logo-title">Study Zone</h1>
+            
+            <div class="auth-buttons-container">
+                <button class="auth-btn" onclick="openAuthModal('signin')">Sign-in</button>
+                <div class="or-text">OR</div>
+                <button class="auth-btn" onclick="openAuthModal('login')">Log-in</button>
+            </div>
+
+            <footer>
+                made by; nami-e_e
+            </footer>
+        </div>
+    </div>
+
+    <!-- Auth Modal Popup -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAuthModal()">&times;</span>
+            
+            <div id="signin-form-box" class="form-box hidden">
+                <h2>Create Account</h2>
+                <input type="text" id="signin-username" placeholder="Username">
+                <input type="password" id="signin-password" placeholder="Password">
+                <button onclick="handleSignup()">Sign Up</button>
+            </div>
+
+            <div id="login-form-box" class="form-box hidden">
+                <h2>Log In</h2>
+                <input type="text" id="login-username" placeholder="Username">
+                <input type="password" id="login-password" placeholder="Password">
+                <button onclick="handleLogin()">Log In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Subject Modal (Allows Multiple Branches) -->
+    <div id="subject-modal" class="modal hidden">
+        <div class="modal-content subject-modal-content">
+            <span class="close-btn" onclick="closeSubjectModal()">&times;</span>
+            <h2>🎨 Add New Subject</h2>
+            
+            <label class="input-label">Subject Name:</label>
+            <input type="text" id="new-subject-name" placeholder="e.g., Mathematics, Physics...">
+
+            <label class="input-label">Choose Emoji / Icon:</label>
+            <div class="emoji-picker">
+                <span class="emoji-option selected" onclick="selectEmoji(this, '📚')">📚</span>
+                <span class="emoji-option" onclick="selectEmoji(this, '📐')">📐</span>
+                <span class="emoji-option" onclick="selectEmoji(this, '🧪')">🧪</span>
+                <span class="emoji-option" onclick="selectEmoji(this, '💻')">💻</span>
+                <span class="emoji-option" onclick="selectEmoji(this, '🎨')">🎨</span>
+                <span class="emoji-option" onclick="selectEmoji(this, '🌍')">🌍</span>
+            </div>
+
+            <label class="input-label">Theme Color:</label>
+            <div class="color-picker">
+                <span class="color-option selected" style="background: #a78bfa;" onclick="selectColor(this, '#a78bfa')"></span>
+                <span class="color-option" style="background: #38bdf8;" onclick="selectColor(this, '#38bdf8')"></span>
+                <span class="color-option" style="background: #4ade80;" onclick="selectColor(this, '#4ade80')"></span>
+                <span class="color-option" style="background: #facc15;" onclick="selectColor(this, '#facc15')"></span>
+                <span class="color-option" style="background: #fb7185;" onclick="selectColor(this, '#fb7185')"></span>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="has-branches-check" onchange="toggleBranchesOption()">
+                <label for="has-branches-check">Does this subject have multiple branches?</label>
+            </div>
+
+            <div id="subject-branches-names-box" class="hidden">
+                <label class="input-label">Branch Names (Separate with commas for multiple branches):</label>
+                <input type="text" id="subject-branches-input" placeholder="e.g., Algebra, Geometry, Calculus">
+            </div>
+
+            <button class="save-subject-btn" onclick="saveNewSubject()">Create Subject</button>
+        </div>
+    </div>
+
+    <!-- Add Material / Content Modal -->
+    <div id="material-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeMaterialModal()">&times;</span>
+            <h2 id="material-modal-title">📄 Add Material</h2>
+
+            <div id="branch-select-container" class="hidden">
+                <label class="input-label">Select Branch:</label>
+                <select id="material-branch-select"></select>
+            </div>
+
+            <label class="input-label">Type Information / Notes Manually:</label>
+            <textarea id="material-text-input" placeholder="Type your lesson notes here..."></textarea>
+
+            <label class="file-upload-label">
+                📂 Or Upload PDF / Text File:
+                <input type="file" id="material-file-input" accept=".pdf,.txt">
+            </label>
+
+            <button class="save-subject-btn" onclick="saveSubjectMaterial()">Save Material</button>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-content" class="hidden">
+
+        <header>
+            <div class="header-top">
+                <h1>📚 StudyZone</h1>
+                <div class="user-profile">
+                    <span id="user-display"></span>
+                    <button id="logout-btn" onclick="logoutUser()">Logout</button>
+                </div>
+            </div>
+            <p id="quote">"Success is the sum of small efforts repeated daily."</p>
+        </header>
+
+        <div class="container">
+
+            <!-- My Subjects Card -->
+            <section class="card subjects-card">
+                <div class="card-header">
+                    <h2>📖 My Subjects & Materials</h2>
+                    <button class="add-subject-trigger-btn" onclick="openSubjectModal()">
+                        <span class="plus-icon">➕</span> Add Subject
+                    </button>
+                </div>
+
+                <div id="subjectsContainer" class="subjects-grid"></div>
+            </section>
+
+            <!-- Pomodoro Timer -->
+            <section class="card">
+                <h2>⏱️ Pomodoro Timer</h2>
+                <h1 id="timer">25:00</h1>
+
+                <div class="timer-buttons">
+                    <button onclick="startTimer()">Start</button>
+                    <button onclick="pauseTimer()">Pause</button>
+                    <button onclick="resetTimer()">Reset</button>
+                </div>
+            </section>
+
+            <!-- Todo List -->
+            <section class="card">
+                <h2>✅ To-Do List</h2>
+                <input type="text" id="taskInput" placeholder="Add a task...">
+                <button onclick="addTask()">Add Task</button>
+                <ul id="taskList"></ul>
+            </section>
+
+            <!-- Lesson Summarizer -->
+            <section class="card">
+                <h2>📝 Lesson Summarizer</h2>
+                <textarea id="lessonText" placeholder="Paste your lesson here..."></textarea>
+                <input type="file" id="lessonFile" accept=".txt,.pdf">
+                <button onclick="summarizeLesson()">Summarize Lesson</button>
+                <h3>Summary:</h3>
+                <p id="summaryOutput"></p>
+            </section>
+
+            <!-- Flashcards -->
+            <section class="card">
+                <h2>🧠 Flashcards</h2>
+                <button onclick="generateFlashcards()">Generate Flashcards</button>
+                <div id="flashcards"></div>
+            </section>
+
+            <!-- Focus Mode -->
+            <section class="card">
+                <h2>🚫 Distraction Blocker</h2>
+                <button onclick="focusMode()">Turn On Focus Mode</button>
+                <p id="focusText"></p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
